@@ -28,6 +28,9 @@ internal static partial class TokenManager
     internal static AzToken GetTokenInteractiveBroker(string resource, string[] scopes, string? claims, string? clientId, string? tenantId, string? tokenCache, int timeoutSeconds, CancellationToken cancellationToken) =>
         taskFactory.Run(() => GetTokenInteractiveBrokerAsync(resource, scopes, claims, clientId, tenantId, tokenCache, timeoutSeconds, cancellationToken));
 
+    internal static AzToken GetTokenInteractiveBroker(string resource, string[] scopes, string? claims, string? clientId, string? tenantId, string tokenCache, int timeoutSeconds, CancellationToken cancellationToken, bool UseDefaultAccount) =>
+        taskFactory.Run(() => GetTokenInteractiveBrokerAsync(resource, scopes, claims, clientId, tenantId, tokenCache, timeoutSeconds, cancellationToken, UseDefaultAccount));
+
     /// <summary>
     /// Gets token interactively using the Web Account Manager Broker.
     /// </summary>
@@ -49,7 +52,8 @@ internal static partial class TokenManager
         string? tenantId,
         string? tokenCache,
         int timeoutSeconds,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        bool useDefaultAccount = false)
     {
         var fullScopes = scopes.Select(s => $"{resource.TrimEnd('/')}/{s}").ToArray();
         var tokenRequestContext = new TokenRequestContext(fullScopes, null, claims, tenantId);
@@ -60,7 +64,8 @@ internal static partial class TokenManager
         IntPtr parentWindow = GetForegroundWindowHandle();
         var options = new InteractiveBrowserCredentialBrokerOptions(parentWindow)
         {
-            UseDefaultBrokerAccount = true,
+            UseDefaultBrokerAccount = useDefaultAccount,
+            ClientId = clientId
         };
 
         // Create a new credential

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Management.Automation;
+using System.Management.Automation.Language;
 using System.Security.Cryptography.X509Certificates;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
@@ -105,6 +106,9 @@ public class GetAzToken : PSLoggerCmdletBase
     [Parameter(ParameterSetName = "WorkloadIdentity", Mandatory = true)]
     public SwitchParameter WorkloadIdentity { get; set; }
 
+    [Parameter(ParameterSetName = "Broker", Mandatory = false)]
+    public SwitchParameter UseDefaultAccount { get; set; } = false;
+
     [Parameter(ParameterSetName = "WorkloadIdentity", Mandatory = true)]
     [ValidateNotNullOrEmpty]
     public string ExternalToken { get; set; }
@@ -177,8 +181,16 @@ Shared token cache (https://learn.microsoft.com/en-us/dotnet/api/azure.identity.
         }
         else if (Broker.IsPresent)
         {
-            WriteVerbose("Getting token interactively using the WAM broker.");
-            WriteObject(TokenManager.GetTokenInteractiveBroker(Resource, Scope, Claim, ClientId, TenantId, TokenCache, TimeoutSeconds, stopProcessing.Token));
+            if (UseDefaultAccount.Equals(true))
+            {
+                WriteVerbose("Getting token of default user using the WAM broker.");
+                WriteObject(TokenManager.GetTokenInteractiveBroker(Resource, Scope, Claim, ClientId, TenantId, TokenCache, TimeoutSeconds, stopProcessing.Token, true));
+            }
+            else
+            {
+                WriteVerbose("Getting token interactively using the WAM broker.");
+                WriteObject(TokenManager.GetTokenInteractiveBroker(Resource, Scope, Claim, ClientId, TenantId, TokenCache, TimeoutSeconds, stopProcessing.Token));
+            }
         }
         else if (DeviceCode.IsPresent)
         {
