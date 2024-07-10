@@ -58,7 +58,10 @@ internal static partial class TokenManager
             return await CacheManager.GetTokenInteractiveAsync(tokenCache!, clientId, tenantId, fullScopes, claims, cancellationToken);
 
         IntPtr parentWindow = GetForegroundWindowHandle();
-        var options = new InteractiveBrowserCredentialBrokerOptions(parentWindow);
+        var options = new InteractiveBrowserCredentialBrokerOptions(parentWindow)
+        {
+            UseDefaultBrokerAccount = true,
+        };
 
         // Create a new credential
         credential = new InteractiveBrowserCredential(options);
