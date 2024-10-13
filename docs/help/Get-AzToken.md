@@ -37,7 +37,7 @@ Get-AzToken [[-Resource] <String>] [[-Scope] <String[]>] [-TenantId <String>] [-
 ### Broker
 ```
 Get-AzToken [[-Resource] <String>] [[-Scope] <String[]>] [-TenantId <String>] [-Claim <String>]
- [-ClientId <String>] [-TokenCache <String>] [-Broker]
+ [-ClientId <String>] [-TokenCache <String>] [-Broker] [-UseDefaultAccount]
  [<CommonParameters>]
 ```
 
@@ -462,6 +462,21 @@ Accept wildcard characters: False
 ```yaml
 Type: String
 Parameter Sets: Interactive, Broker, DeviceCode
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -UseDefaultAccount
+{{ Fill UseDefaultAccount Description }}
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: Broker
 Aliases:
 
 Required: False

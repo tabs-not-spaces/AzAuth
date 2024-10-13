@@ -25,8 +25,8 @@ internal static partial class TokenManager
     /// <param name="timeoutSeconds"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    internal static AzToken GetTokenInteractiveBroker(string resource, string[] scopes, string? claims, string? clientId, string? tenantId, string? tokenCache, int timeoutSeconds, CancellationToken cancellationToken) =>
-        taskFactory.Run(() => GetTokenInteractiveBrokerAsync(resource, scopes, claims, clientId, tenantId, tokenCache, timeoutSeconds, cancellationToken));
+    internal static AzToken GetTokenInteractiveBroker(string resource, string[] scopes, string? claims, string? clientId, string? tenantId, string? tokenCache, int timeoutSeconds, CancellationToken cancellationToken, bool UseDefaultAccount = false) =>
+        taskFactory.Run(() => GetTokenInteractiveBrokerAsync(resource, scopes, claims, clientId, tenantId, tokenCache, timeoutSeconds, cancellationToken, UseDefaultAccount));
 
     /// <summary>
     /// Gets token interactively using the Web Account Manager Broker.
@@ -49,7 +49,8 @@ internal static partial class TokenManager
         string? tenantId,
         string? tokenCache,
         int timeoutSeconds,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        bool UseDefaultAccount)
     {
         var fullScopes = scopes.Select(s => $"{resource.TrimEnd('/')}/{s}").ToArray();
         var tokenRequestContext = new TokenRequestContext(fullScopes, null, claims, tenantId);
@@ -58,8 +59,10 @@ internal static partial class TokenManager
             return await CacheManager.GetTokenInteractiveAsync(tokenCache!, clientId, tenantId, fullScopes, claims, cancellationToken);
 
         IntPtr parentWindow = GetForegroundWindowHandle();
-        var options = new InteractiveBrowserCredentialBrokerOptions(parentWindow);
-
+        var options = new InteractiveBrowserCredentialBrokerOptions(parentWindow)
+        {
+            UseDefaultBrokerAccount = true,
+        };
         // Create a new credential
         credential = new InteractiveBrowserCredential(options);
 
