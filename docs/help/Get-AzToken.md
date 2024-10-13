@@ -472,7 +472,8 @@ Accept wildcard characters: False
 ```
 
 ### -UseDefaultAccount
-{{ Fill UseDefaultAccount Description }}
+
+Use the default account for the broker to allow silent authentication.
 
 ```yaml
 Type: SwitchParameter
