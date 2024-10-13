@@ -76,7 +76,6 @@ public class GetAzToken : PSLoggerCmdletBase
     public string ClientId { get; set; }
 
     [Parameter(ParameterSetName = "Interactive")]
-    [Parameter(ParameterSetName = "Broker")]
     [Parameter(ParameterSetName = "DeviceCode")]
     [Parameter(ParameterSetName = "Cache", Mandatory = true)]
     [ValidateNotNullOrEmpty]
